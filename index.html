@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>حساب الكهرباء</title>
+  <style>
+    body { font-family: Tahoma,Verdana; direction: rtl; background:#eef2f7;
+      margin:0;padding:20px; display:flex; justify-content:center; align-items:center; height:100vh; }
+    .container {
+      background:#fff; padding:30px 40px; border-radius:12px;
+      box-shadow:0 6px 20px rgba(0,0,0,0.1); width:320px; text-align:center;
+    }
+    h2 { color:#0056b3; margin-bottom:20px; font-weight:600; }
+    input {
+      width:100%; padding:12px 0; margin:8px 0; border-radius:8px;
+      border:1px solid #ccc; font-size:16px; transition:border-color .3s;
+    }
+    input:focus { outline:none; border-color:#0056b3; }
+    button {
+      width:100%; padding:14px 0; margin-top:18px;
+      background:#0056b3; color:#fff; font-size:18px;
+      border:none; border-radius:8px; cursor:pointer; transition:background .3s;
+    }
+    button:hover { background:#003f8a; }
+    #result { margin-top:24px; font-size:22px; font-weight:bold; color:#333; min-height:30px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>حساب الكهرباء</h2>
+    <input type="number" id="current" placeholder="الاستهلاك الحالي" />
+    <input type="number" id="previous" placeholder="الاستهلاك السابق" />
+    <input type="number" id="subscription" placeholder="الاشتراك الشهري" />
+    <!-- ضريبة القيمة المضافة أصبحت ثابتة -->
+    <input type="number" id="tax" placeholder="قيمة الضريبة المضافة" disabled value="0" />
+    <button onclick="calculate()">احسب سعر الفاتورة</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    function calculate() {
+      const current = parseFloat(document.getElementById('current').value);
+      const previous = parseFloat(document.getElementById('previous').value);
+      const subscription = parseFloat(document.getElementById('subscription').value);
+      const rate = 0.18;
+      const vatRate = 0.15;
+
+      if ([current, previous, subscription].some(isNaN)) {
+        document.getElementById('result').textContent = 'يرجى إدخال القيم بشكل صحيح';
+        return;
+      }
+
+      if (current < previous) {
+        document.getElementById('result').textContent = 'الاستهلاك الحالي يجب أن يكون أكبر من السابق';
+        return;
+      }
+
+      const usageCost = (current - previous) * rate;
+      const subtotal = usageCost + subscription;
+      const vatAmount = subtotal * vatRate;
+      const total = subtotal + vatAmount;
+
+      document.getElementById('result').textContent = `سعر الفاتورة: ${total.toFixed(2)} ريال (شامل 🇸🇦 15% VAT)`;
+    }
+  </script>
+</body>
+</html>
